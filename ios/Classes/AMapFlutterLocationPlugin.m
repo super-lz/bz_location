@@ -154,11 +154,11 @@
     NSNumber *geoLanguage = call.arguments[@"geoLanguage"];
     if (geoLanguage) {
         if ([geoLanguage integerValue] == 0) {
-            [manager setReGeocodeLanguage:AMapLocationReGeocodeLanguageDefault];
+            [manager setReGeocodeLanguage:AMapRegionLanguageTypeZhHans];
         } else if ([geoLanguage integerValue] == 1) {
-            [manager setReGeocodeLanguage:AMapLocationReGeocodeLanguageChinse];
+            [manager setReGeocodeLanguage:AMapRegionLanguageTypeZhHans];
         } else if ([geoLanguage integerValue] == 2) {
-            [manager setReGeocodeLanguage:AMapLocationReGeocodeLanguageEnglish];
+            [manager setReGeocodeLanguage:AMapRegionLanguageTypeEn];
         }
     }
 

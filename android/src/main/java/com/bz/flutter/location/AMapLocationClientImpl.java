@@ -39,6 +39,10 @@ public class AMapLocationClientImpl implements AMapLocationListener {
         }
     }
 
+    public void setEventSink(EventChannel.EventSink eventSink) {
+        mEventSink = eventSink;
+    }
+
     /**
      * 开始定位
      */
