@@ -40,6 +40,8 @@ public class AMapLocationClientImpl implements AMapLocationListener {
     }
 
     public void setEventSink(EventChannel.EventSink eventSink) {
+        // EventChannel may attach after the location client is created.
+        // Keep the latest sink for subsequent native callbacks.
         mEventSink = eventSink;
     }
 

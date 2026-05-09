@@ -27,6 +27,24 @@
    - `AMapFlutterLocation.updatePrivacyAgree(...)`
 5. 设置 Key、配置 `AMapLocationOption`，再开始定位。
 
+### iOS 模拟器
+
+高德官方当前 CocoaPods 包在 Apple Silicon iOS 模拟器上不能直接链接真实 SDK。原因是 `AMapFoundation` 官方 podspec 会对 iOS Simulator 排除 `arm64`，而 Apple Silicon 模拟器需要 `arm64`。
+
+可选方式：
+
+1. iOS 真机：调试真实定位。
+2. Apple Silicon iOS 模拟器：启用 Stub 模式，只调试宿主 App UI。
+3. Rosetta / x86_64 模拟器：可尝试运行真实高德 SDK，但依赖本机 Xcode、模拟器 runtime、Flutter 和 CocoaPods 环境，不保证可用。
+
+启用 Stub 模式：
+
+```bash
+AMAP_IOS_SIMULATOR_STUBS=1 pod install
+```
+
+切换 Stub / 真实 SDK 后，需要重新安装 Pods。
+
 ## 最小示例
 
 ```dart
@@ -42,3 +60,31 @@ plugin.startLocation();
 
 - 当前实现以兼容高德原插件 API 为主，便于你继续按业务需要做二次封装。
 - `flutter analyze` 仍会报告一批历史风格提示，但核心编译错误已清理，单测可通过。
+
+## 兼容处理
+
+### Android EventChannel
+
+Android 侧 `setLocationOption` 可能早于 Dart `EventChannel` 监听建立，从而先创建定位 client。插件会在 `onListen` 和获取 client 时重新绑定最新的 `EventSink`，保证定位结果可以回传到 Dart。
+
+### iOS 逆地理语言枚举
+
+当前高德 iOS 定位 SDK 中，`reGeocodeLanguage` 使用 `AMapRegionLanguageType`。插件保留 Dart 侧原有枚举含义，并在 iOS 原生侧映射到当前 SDK 的枚举值：
+
+- `DEFAULT` -> `AMapRegionLanguageTypeZhHans`
+- `ZH` -> `AMapRegionLanguageTypeZhHans`
+- `EN` -> `AMapRegionLanguageTypeEn`
+
+### iOS 模拟器 Stub 实现
+
+设置环境变量后，podspec 会使用 `ios/ClassesStub` 中的模拟器实现：
+
+```bash
+AMAP_IOS_SIMULATOR_STUBS=1
+```
+
+- 注册 `bz_location` MethodChannel
+- 注册 `bz_location_stream` EventChannel
+- `startLocation` 时返回一个固定模拟定位点
+- 不链接 `AMapLocation`
+- 不提供真实定位能力

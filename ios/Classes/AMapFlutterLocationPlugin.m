@@ -153,6 +153,8 @@
         
     NSNumber *geoLanguage = call.arguments[@"geoLanguage"];
     if (geoLanguage) {
+        // AMapLocation exposes reGeocodeLanguage as AMapRegionLanguageType in
+        // current SDK versions. Preserve the existing Dart enum mapping.
         if ([geoLanguage integerValue] == 0) {
             [manager setReGeocodeLanguage:AMapRegionLanguageTypeZhHans];
         } else if ([geoLanguage integerValue] == 1) {

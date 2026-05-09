@@ -61,6 +61,7 @@ public class AMapFlutterLocationPlugin implements FlutterPlugin, MethodCallHandl
   @Override
   public void onListen(Object o, EventChannel.EventSink eventSink) {
     mEventSink = eventSink;
+    // Clients created before EventChannel attachment must use the latest sink.
     for (Map.Entry<String, AMapLocationClientImpl> entry : locationClientMap.entrySet()) {
       entry.getValue().setEventSink(eventSink);
     }
@@ -203,6 +204,7 @@ public class AMapFlutterLocationPlugin implements FlutterPlugin, MethodCallHandl
       AMapLocationClientImpl locationClientImp = new AMapLocationClientImpl(mContext, pluginKey, mEventSink);
       locationClientMap.put(pluginKey, locationClientImp);
     }
+    // onListen may happen before or after client creation.
     locationClientMap.get(pluginKey).setEventSink(mEventSink);
     return locationClientMap.get(pluginKey);
   }

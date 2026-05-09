@@ -13,10 +13,17 @@ Flutter plugin for AMap location SDK.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'bz' => 'dev@example.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.dependency 'AMapLocation'
+  # AMap iOS frameworks may not provide a usable Apple Silicon simulator slice.
+  # AMAP_IOS_SIMULATOR_STUBS=1 builds a simulator-only stub implementation.
+  if ENV['AMAP_IOS_SIMULATOR_STUBS'] == '1'
+    s.source_files = 'ClassesStub/**/*'
+    s.public_header_files = 'ClassesStub/**/*.h'
+  else
+    s.source_files = 'Classes/**/*'
+    s.public_header_files = 'Classes/**/*.h'
+    s.dependency 'AMapLocation'
+  end
   s.static_framework = true
   s.platform = :ios, '13.0'
 
