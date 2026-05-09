@@ -56,26 +56,7 @@ plugin.setLocationOption(AMapLocationOption(onceLocation: true));
 plugin.startLocation();
 ```
 
-## 说明
-
-- 当前实现以兼容高德原插件 API 为主，便于你继续按业务需要做二次封装。
-- `flutter analyze` 仍会报告一批历史风格提示，但核心编译错误已清理，单测可通过。
-
-## 兼容处理
-
-### Android EventChannel
-
-Android 侧 `setLocationOption` 可能早于 Dart `EventChannel` 监听建立，从而先创建定位 client。插件会在 `onListen` 和获取 client 时重新绑定最新的 `EventSink`，保证定位结果可以回传到 Dart。
-
-### iOS 逆地理语言枚举
-
-当前高德 iOS 定位 SDK 中，`reGeocodeLanguage` 使用 `AMapRegionLanguageType`。插件保留 Dart 侧原有枚举含义，并在 iOS 原生侧映射到当前 SDK 的枚举值：
-
-- `DEFAULT` -> `AMapRegionLanguageTypeZhHans`
-- `ZH` -> `AMapRegionLanguageTypeZhHans`
-- `EN` -> `AMapRegionLanguageTypeEn`
-
-### iOS 模拟器 Stub 实现
+## iOS 模拟器 Stub 行为
 
 设置环境变量后，podspec 会使用 `ios/ClassesStub` 中的模拟器实现：
 
@@ -83,8 +64,11 @@ Android 侧 `setLocationOption` 可能早于 Dart `EventChannel` 监听建立，
 AMAP_IOS_SIMULATOR_STUBS=1
 ```
 
-- 注册 `bz_location` MethodChannel
-- 注册 `bz_location_stream` EventChannel
 - `startLocation` 时返回一个固定模拟定位点
 - 不链接 `AMapLocation`
 - 不提供真实定位能力
+
+## 说明
+
+- 当前实现以兼容高德原插件 API 为主，便于你继续按业务需要做二次封装。
+- `flutter analyze` 仍会报告一批历史风格提示，但核心编译错误已清理，单测可通过。
